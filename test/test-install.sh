@@ -71,7 +71,8 @@ else
 fi
 
 # Binary actually runs and reports the same version as the output.
-runtime_version="$("${workdir}/bin/shippy" version 2>/dev/null | head -n1 | awk '{print $3}')"
+runtime_output="$("${workdir}/bin/shippy" version 2>/dev/null || true)"
+runtime_version="$(printf '%s\n' "$runtime_output" | awk 'NR==1{print $3; exit}')"
 check "binary runs and reports same version as output" "$runtime_version" "$out_version"
 
 # When a concrete version was requested, the binary must report it.

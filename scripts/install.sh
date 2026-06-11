@@ -58,9 +58,10 @@ fi
 if [ "$VERSION" = "latest" ]; then
   echo "Resolving latest shippy release..."
   api="https://api.github.com/repos/${REPO}/releases/latest"
-  VERSION="$(curl -sSfL "${auth[@]+"${auth[@]}"}" "$api" \
-    | grep -m1 '"tag_name"' \
-    | sed -E 's/.*"tag_name"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')"
+  if ! response="$(curl -sSfL "${auth[@]+"${auth[@]}"}" "$api")"; then
+    fail "Could not reach the GitHub releases API at ${api}."
+  fi
+  VERSION="$(printf '%s\n' "$response" | awk -F'"' '/"tag_name"/{print $4; exit}')"
   if [ -z "$VERSION" ]; then
     fail "Could not resolve the latest shippy release from ${api}."
   fi
@@ -116,7 +117,8 @@ fi
 export PATH="${INSTALL_DIR}:${PATH}"
 
 # --- Verify the binary runs and capture the reported version ---------------
-installed="$("${INSTALL_DIR}/shippy" version 2>/dev/null | head -n1 | awk '{print $3}')"
+version_output="$("${INSTALL_DIR}/shippy" version 2>/dev/null || true)"
+installed="$(printf '%s\n' "$version_output" | awk 'NR==1{print $3; exit}')"
 if [ -z "$installed" ]; then
   fail "shippy was installed but did not report a version. The download may be corrupt."
 fi
