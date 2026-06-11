@@ -80,7 +80,7 @@ environment variables, so it can be tested without a runner:
 ```
 
 CI ([`.github/workflows/test.yml`](.github/workflows/test.yml)) runs both the standalone script test and
-the composite action across `ubuntu-latest`, `ubuntu-24.04-arm`, `macos-latest`, and `macos-13`.
+the composite action across `ubuntu-latest`, `ubuntu-24.04-arm`, `macos-latest`, and `macos-15`.
 
 ## License
 
