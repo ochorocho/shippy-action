@@ -1,0 +1,55 @@
+name: 'Setup Shippy'
+description: 'Install the shippy deployment tool for Composer based PHP projects and optionally run it.'
+author: 'ochorocho'
+branding:
+  icon: 'truck'
+  color: 'blue'
+
+inputs:
+  version:
+    description: >-
+      Shippy version to install. Accepts a release tag such as "v0.0.9" or "0.0.9",
+      or "latest" to install the most recent release.
+    required: false
+    default: 'latest'
+  args:
+    description: >-
+      Optional arguments to run shippy with after installation
+      (e.g. "deploy production" or "config validate").
+      Leave empty to only install the binary.
+    required: false
+    default: ''
+  install-dir:
+    description: 'Directory the shippy binary is installed into. Defaults to "$HOME/.shippy/bin".'
+    required: false
+    default: ''
+  token:
+    description: 'GitHub token used to resolve the "latest" release and avoid API rate limits.'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  version:
+    description: 'The resolved shippy version that was installed (e.g. "0.0.9").'
+    value: ${{ steps.install.outputs.version }}
+  bin-path:
+    description: 'Absolute path to the installed shippy binary.'
+    value: ${{ steps.install.outputs.bin-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: install
+      shell: bash
+      env:
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_INSTALL_DIR: ${{ inputs.install-dir }}
+        INPUT_TOKEN: ${{ inputs.token }}
+      run: '${{ github.action_path }}/scripts/install.sh'
+
+    - id: run
+      if: ${{ inputs.args != '' }}
+      shell: bash
+      env:
+        SHIPPY_ARGS: ${{ inputs.args }}
+      run: shippy $SHIPPY_ARGS

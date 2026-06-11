@@ -1,0 +1,3 @@
+# Local test artifacts (the test harness installs into a temp dir, but guard anyway)
+/shippy
+/shippy-*

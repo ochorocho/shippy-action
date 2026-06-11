@@ -1,0 +1,81 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Run the standalone install script directly across runner OS/arch combos.
+  script:
+    name: install.sh (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test pinned version
+        run: ./test/test-install.sh 0.0.9
+      - name: Test latest
+        run: ./test/test-install.sh latest
+
+  # Use the composite action the way a consumer would.
+  action:
+    name: action (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, macos-13]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install latest shippy
+        id: setup
+        uses: ./
+
+      - name: Assert outputs and PATH
+        shell: bash
+        run: |
+          echo "Resolved version: ${{ steps.setup.outputs.version }}"
+          echo "Binary path: ${{ steps.setup.outputs.bin-path }}"
+          test -n "${{ steps.setup.outputs.version }}"
+          test -x "${{ steps.setup.outputs.bin-path }}"
+          # shippy is available on PATH for later steps
+          shippy version
+          command -v shippy
+
+  pinned:
+    name: action pinned version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install shippy 0.0.9 (without leading v)
+        id: setup
+        uses: ./
+        with:
+          version: '0.0.9'
+      - name: Assert exact version
+        shell: bash
+        run: |
+          test "${{ steps.setup.outputs.version }}" = "0.0.9"
+          shippy version | grep -q '0.0.9'
+
+  run-args:
+    name: action run args
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install and run "shippy --help"
+        uses: ./
+        with:
+          version: latest
+          args: '--help'
