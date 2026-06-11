@@ -11,7 +11,7 @@ Supports Linux and macOS runners (`amd64` and `arm64`). Shippy does not ship Win
 Install the latest release:
 
 ```yaml
-- uses: ochorocho/shippy-action@v1
+- uses: ochorocho/shippy-action@v0.0.1
 ```
 
 Install a specific version and deploy:
@@ -21,7 +21,7 @@ steps:
   - uses: actions/checkout@v4
 
   - name: Setup shippy
-    uses: ochorocho/shippy-action@v1
+    uses: ochorocho/shippy-action@v0.0.1
     with:
       version: v0.0.9
 
@@ -32,7 +32,7 @@ steps:
 Install and run in a single step via `args`:
 
 ```yaml
-- uses: ochorocho/shippy-action@v1
+- uses: ochorocho/shippy-action@v0.0.1
   with:
     version: latest
     args: deploy production
