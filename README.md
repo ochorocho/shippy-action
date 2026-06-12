@@ -23,7 +23,7 @@ steps:
   - name: Setup shippy
     uses: ochorocho/shippy-action@v0.0.1
     with:
-      version: v0.0.9
+      shippy-version: v0.0.9
 
   - name: Deploy
     run: shippy deploy production
@@ -34,18 +34,18 @@ Install and run in a single step via `args`:
 ```yaml
 - uses: ochorocho/shippy-action@v0.0.1
   with:
-    version: latest
+    shippy-version: latest
     args: deploy production
 ```
 
 ## Inputs
 
-| Name          | Required | Default            | Description                                                                                  |
-| ------------- | -------- | ------------------ | -------------------------------------------------------------------------------------------- |
-| `version`     | no       | `latest`           | Release to install. Accepts `latest`, a tag like `v0.0.9`, or a bare version like `0.0.9`.   |
-| `args`        | no       | `''`               | Arguments to run shippy with after install (e.g. `deploy production`). Empty = install only. |
-| `install-dir` | no       | `$HOME/.shippy/bin`| Directory the binary is installed into.                                                      |
-| `token`       | no       | `${{ github.token }}` | GitHub token used to resolve `latest` and avoid API rate limits.                          |
+| Name             | Required | Default            | Description                                                                                  |
+| ---------------- | -------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| `shippy-version` | no       | `latest`           | Release to install. Accepts `latest`, a tag like `v0.0.9`, or a bare version like `0.0.9`.   |
+| `args`           | no       | `''`               | Arguments to run shippy with after install (e.g. `deploy production`). Empty = install only. |
+| `install-dir`    | no       | `$HOME/.shippy/bin`| Directory the binary is installed into.                                                      |
+| `token`          | no       | `${{ github.token }}` | GitHub token used to resolve `latest` and avoid API rate limits.                          |
 
 ## Outputs
 

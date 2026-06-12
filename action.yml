@@ -6,7 +6,7 @@ branding:
   color: 'blue'
 
 inputs:
-  version:
+  shippy-version:
     description: >-
       Shippy version to install. Accepts a release tag such as "v0.0.9" or "0.0.9",
       or "latest" to install the most recent release.
@@ -42,7 +42,7 @@ runs:
     - id: install
       shell: bash
       env:
-        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_VERSION: ${{ inputs.shippy-version }}
         INPUT_INSTALL_DIR: ${{ inputs.install-dir }}
         INPUT_TOKEN: ${{ inputs.token }}
       run: '${{ github.action_path }}/scripts/install.sh'

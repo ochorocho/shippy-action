@@ -89,8 +89,11 @@ if ! curl -sSfL "${auth[@]+"${auth[@]}"}" -o "${tmp}/${asset}.checksum" "${base}
   fail "Failed to download checksum ${base}/${asset}.checksum."
 fi
 
-# --- Verify checksum (file contains a bare sha256 hex digest) --------------
-expected="$(tr -d ' \t\n\r' < "${tmp}/${asset}.checksum")"
+# --- Verify checksum -------------------------------------------------------
+# The checksum file is either a bare hex digest (older releases) or the standard
+# "<digest>  <filename>" sha256sum format (newer releases). Take the first field
+# so both work.
+expected="$(awk '{print $1; exit}' "${tmp}/${asset}.checksum")"
 if command -v sha256sum >/dev/null 2>&1; then
   actual="$(sha256sum "${tmp}/${asset}" | awk '{print $1}')"
 else
